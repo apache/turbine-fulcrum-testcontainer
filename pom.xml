@@ -13,7 +13,7 @@
     <parent>
     <artifactId>turbine-parent</artifactId>
     <groupId>org.apache.turbine</groupId>
-    <version>8</version>
+    <version>9-SNAPSHOT</version>
     <relativePath></relativePath>
     </parent>
 
@@ -32,14 +32,7 @@
     <url>https://gitbox.apache.org/repos/asf/turbine-fulcrum-testcontainer.git</url>
     </scm>
 
-    <distributionManagement>
-    <site>
-        <id>apache.website</id>
-        <name>Fulcrum Website</name>
-        <url>http://turbine.apache.org/fulcrum/fulcrum-testcontainer/</url>
-    </site>
-    </distributionManagement>
-
+   <!-- distributionManagement id and url defined in parent, adapt turbine.site.path -->
     <developers>
     <developer>
         <name>Siegfried Goeschl</name>
@@ -152,7 +145,7 @@
     </build>
 
     <properties>
-    <turbine.site.path>fulcrum/fulcrum-testcontainer</turbine.site.path>
+        <turbine.site.path>turbine-fulcrum-testcontainer</turbine.site.path>
         <turbine.scmPubCheckoutDirectory>${turbine.site.cache}/fulcrum/testcontainer</turbine.scmPubCheckoutDirectory>
         <junit.jupiter.version>5.7.1</junit.jupiter.version>
         <junit.platform>1.7.1</junit.platform>
