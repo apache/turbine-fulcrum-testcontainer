@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseUnitTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Fulcrum Test Container</a> &gt; <a href="index.source.html" class="el_package">org.apache.fulcrum.testcontainer</a> &gt; <span class="el_source">BaseUnitTest.java</span></div><h1>BaseUnitTest.java</h1><pre class="source lang-java linenums">package org.apache.fulcrum.testcontainer;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.apache.avalon.framework.component.ComponentException;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+
+import junit.framework.TestCase;
+
+/**
+ * Base class for unit tests for components. This version doesn't load the
+ * container until the first request for a component. This allows the tester to
+ * populate the configurationFileName and roleFileName, possible one per test.
+ * 
+ * This class uses JUnit 3.
+ * 
+ * @see BaseUnit4Test
+ *
+ * @author &lt;a href=&quot;mailto:epugh@upstate.com&quot;&gt;Eric Pugh&lt;/a&gt;
+ * @author &lt;a href=&quot;mailto:quintonm@bellsouth.net&quot;&gt;Quinton McCombs&lt;/a&gt;
+ * @version $Id$
+ */
+public class BaseUnitTest extends TestCase {
+	public static final String CONTAINER_ECM = &quot;CONTAINER_ECM&quot;;
+	public static final String CONTAINER_YAAFI = &quot;CONTAINER_YAAFI&quot;;
+
+	/** Key used in the context for defining the application root */
+	public static final String COMPONENT_APP_ROOT = Container.COMPONENT_APP_ROOT;
+
+	/** Pick the default container to be Yaafi **/
+	public static final String containerType = CONTAINER_YAAFI;
+
+	/** Use INFO for ConsoleLogger */
+	public static final int defaultLogLevel = ConsoleLogger.LEVEL_INFO;
+
+	/** Container for the components */
+	private Container container;
+
+	/** Setup our default configurationFileName */
+<span class="nc" id="L57">	private String configurationFileName = &quot;src/test/TestComponentConfig.xml&quot;;</span>
+
+	/** Setup our default roleFileName */
+<span class="nc" id="L60">	private String roleFileName = &quot;src/test/TestRoleConfig.xml&quot;;</span>
+
+	/** Setup our default parameterFileName */
+<span class="nc" id="L63">	private String parameterFileName = null;</span>
+
+	/** Set the log level (only works for YAAFI container) */
+<span class="nc" id="L66">	private int logLevel = defaultLogLevel;</span>
+
+	/**
+	 * Gets the configuration file name for the container should use for this test.
+	 * By default it is src/test/TestComponentConfig.
+	 * 
+	 * @param configurationFileName the location of the config file
+	 */
+	protected void setConfigurationFileName(String configurationFileName) 
+	{
+<span class="nc" id="L76">		this.configurationFileName = configurationFileName;</span>
+<span class="nc" id="L77">	}</span>
+
+	/**
+	 * Override the role file name for the container should use for this test. By
+	 * default it is src/test/TestRoleConfig.
+	 * 
+	 * @param roleFileName location of the role file
+	 */
+	protected void setRoleFileName(String roleFileName) 
+	{
+<span class="nc" id="L87">		this.roleFileName = roleFileName;</span>
+<span class="nc" id="L88">	}</span>
+
+	/**
+	 * Set the console logger level
+	 * 
+	 * @see org.apache.avalon.framework.logger.ConsoleLogger for debugging levels
+	 * @param logLevel set valid logging level
+	 */
+	protected void setLogLevel(int logLevel) 
+	{
+<span class="nc" id="L98">		this.logLevel = logLevel;</span>
+<span class="nc" id="L99">	}</span>
+
+	/**
+	 * Constructor for test.
+	 *
+	 * @param testName name of the test being executed
+	 */
+	public BaseUnitTest(String testName) 
+	{
+<span class="nc" id="L108">		super(testName);</span>
+<span class="nc" id="L109">	}</span>
+
+	/**
+	 * Clean up after each test is run.
+	 */
+	protected void tearDown() 
+	{
+<span class="nc bnc" id="L116" title="All 2 branches missed.">		if (container != null) </span>
+		{
+<span class="nc" id="L118">			container.dispose();</span>
+		}
+<span class="nc" id="L120">		container = null;</span>
+<span class="nc" id="L121">	}</span>
+
+	/**
+	 * Gets the configuration file name for the container should use for this test.
+	 *
+	 * @return The filename of the configuration file
+	 */
+	protected String getConfigurationFileName() 
+	{
+<span class="nc" id="L130">		return configurationFileName;</span>
+	}
+
+	/**
+	 * Gets the role file name for the container should use for this test.
+	 *
+	 * @return The filename of the role configuration file
+	 */
+	protected String getRoleFileName() 
+	{
+<span class="nc" id="L140">		return roleFileName;</span>
+	}
+
+	/**
+	 * Gets the parameter file name for the container should use for this test.
+	 *
+	 * @return The filename of the role configuration file
+	 */
+	protected String getParameterFileName() 
+	{
+<span class="nc" id="L150">		return parameterFileName;</span>
+	}
+
+	/**
+	 * Returns an instance of the named component. This method will also start the
+	 * container if it has not been started already
+	 *
+	 * @param roleName Name of the role the component fills.
+	 * @return instance of the component
+	 * @throws ComponentException generic exception
+	 */
+	protected Object lookup(String roleName) throws ComponentException 
+	{
+<span class="nc bnc" id="L163" title="All 2 branches missed.">		if (container == null) {</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">			if (containerType.equals(CONTAINER_ECM)) </span>
+			{
+<span class="nc" id="L166">				container = new ECMContainer();</span>
+			} 
+			else 
+			{
+<span class="nc" id="L170">				container = new YAAFIContainer(logLevel);</span>
+			}
+<span class="nc" id="L172">			container.startup(getConfigurationFileName(), getRoleFileName(), getParameterFileName());</span>
+		}
+<span class="nc" id="L174">		return container.lookup(roleName);</span>
+	}
+
+	/**
+	 * Helper method for converting to and from Merlin Unit TestCase.
+	 * 
+	 * @param roleName the role name to resolve
+	 * @return the component matching the role
+	 * @throws ComponentException generic exception
+	 */
+	protected Object resolve(String roleName) throws ComponentException 
+	{
+<span class="nc" id="L186">		return lookup(roleName);</span>
+	}
+
+	/**
+	 * Releases the component.
+	 *
+	 * @param component component to be released
+	 */
+	protected void release(Object component) 
+	{
+<span class="nc bnc" id="L196" title="All 2 branches missed.">		if (container != null) </span>
+		{
+<span class="nc" id="L198">			container.release(component);</span>
+		}
+<span class="nc" id="L200">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

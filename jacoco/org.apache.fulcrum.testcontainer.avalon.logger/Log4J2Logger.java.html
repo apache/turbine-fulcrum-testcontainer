@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Log4J2Logger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Fulcrum Test Container</a> &gt; <a href="index.source.html" class="el_package">org.apache.fulcrum.testcontainer.avalon.logger</a> &gt; <span class="el_source">Log4J2Logger.java</span></div><h1>Log4J2Logger.java</h1><pre class="source lang-java linenums">package org.apache.fulcrum.testcontainer.avalon.logger;
+
+import java.util.Objects;
+
+import org.apache.avalon.framework.logger.Logger;
+import org.apache.logging.log4j.Level;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the &quot;License&quot;); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+import org.apache.logging.log4j.LogManager;
+
+/**
+ * A Log4J2 wrapper class for Logger.
+ * 
+ * - supports only minimal logging mechanism, without suppliers or objects.
+ * 
+ * Use org.apache.fulcrum.yaafi.framework.logger.Log4j2Logger instead.
+ *
+ * @author &lt;a href=&quot;mailto:dev@turbine.apache.org&quot;&gt;Turbine Development Team&lt;/a&gt;
+ * @version $Id$
+ */
+@Deprecated
+public final class Log4J2Logger
+    implements Logger
+{
+
+    //underlying implementation
+    private final org.apache.logging.log4j.Logger m_logger;
+
+    /**
+     * Create a logger that delegates to specified category.
+     *
+     * @param logImpl the category to delegate to
+     */
+    public Log4J2Logger( final org.apache.logging.log4j.Logger logImpl )
+<span class="fc" id="L52">    {</span>
+<span class="fc" id="L53">        Objects.requireNonNull( logImpl, &quot;Log4J2 logger must not be null&quot; );</span>
+<span class="fc" id="L54">        m_logger = logImpl;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Log a debug message.
+     *
+     * @param message the message
+     */
+    public final void debug( final String message )
+    {
+<span class="fc" id="L64">        m_logger.log( Level.DEBUG, message );</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Log a debug message.
+     *
+     * @param message the message
+     * @param throwable the throwable
+     */
+    public final void debug( final String message, final Throwable throwable )
+    {
+<span class="nc" id="L75">        m_logger.log( Level.DEBUG, message, throwable );</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Determine if messages of priority &quot;debug&quot; will be logged.
+     *
+     * @return true if &quot;debug&quot; messages will be logged
+     */
+    public final boolean isDebugEnabled()
+    {
+<span class="fc" id="L85">        return m_logger.isDebugEnabled();</span>
+    }
+
+    /**
+     * Log a info message.
+     *
+     * @param message the message
+     */
+    public final void info( final String message )
+    {
+<span class="fc" id="L95">        m_logger.log( Level.INFO, message );</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Log a info message.
+     *
+     * @param message the message
+     * @param throwable the throwable
+     */
+    public final void info( final String message, final Throwable throwable )
+    {
+<span class="nc" id="L106">        m_logger.log( Level.INFO, message, throwable );</span>
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Determine if messages of priority &quot;info&quot; will be logged.
+     *
+     * @return true if &quot;info&quot; messages will be logged
+     */
+    public final boolean isInfoEnabled()
+    {
+<span class="nc" id="L116">        return m_logger.isInfoEnabled();</span>
+    }
+
+    /**
+     * Log a warn message.
+     *
+     * @param message the message
+     */
+    public final void warn( final String message )
+    {
+<span class="nc" id="L126">        m_logger.log( Level.WARN, message );</span>
+<span class="nc" id="L127">    }</span>
+
+    /**
+     * Log a warn message.
+     *
+     * @param message the message
+     * @param throwable the throwable
+     */
+    public final void warn( final String message, final Throwable throwable )
+    {
+<span class="nc" id="L137">        m_logger.log( Level.WARN, message, throwable );</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Determine if messages of priority &quot;warn&quot; will be logged.
+     *
+     * @return true if &quot;warn&quot; messages will be logged
+     */
+    public final boolean isWarnEnabled()
+    {
+<span class="nc" id="L147">        return m_logger.isEnabled( Level.WARN );</span>
+    }
+
+    /**
+     * Log a error message.
+     *
+     * @param message the message
+     */
+    public final void error( final String message )
+    {
+<span class="fc" id="L157">        m_logger.log( Level.ERROR, message );</span>
+<span class="fc" id="L158">    }</span>
+
+    /**
+     * Log a error message.
+     *
+     * @param message the message
+     * @param throwable the throwable
+     */
+    public final void error( final String message, final Throwable throwable )
+    {
+<span class="fc" id="L168">        m_logger.log( Level.ERROR, message, throwable );</span>
+<span class="fc" id="L169">    }</span>
+
+    /**
+     * Determine if messages of priority &quot;error&quot; will be logged.
+     *
+     * @return true if &quot;error&quot; messages will be logged
+     */
+    public final boolean isErrorEnabled()
+    {
+<span class="nc" id="L178">        return m_logger.isEnabled( Level.ERROR );</span>
+    }
+
+    /**
+     * Log a fatalError message.
+     *
+     * @param message the message
+     */
+    public final void fatalError( final String message )
+    {
+<span class="nc" id="L188">        m_logger.log( Level.FATAL, message );</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Log a fatalError message.
+     *
+     * @param message the message
+     * @param throwable the throwable
+     */
+    public final void fatalError( final String message, final Throwable throwable )
+    {
+<span class="nc" id="L199">        m_logger.log( Level.ERROR, message, throwable );</span>
+<span class="nc" id="L200">    }</span>
+
+    /**
+     * Determine if messages of priority &quot;fatalError&quot; will be logged.
+     *
+     * @return true if &quot;fatalError&quot; messages will be logged
+     */
+    public final boolean isFatalErrorEnabled()
+    {
+<span class="nc" id="L209">        return m_logger.isEnabled( Level.FATAL );</span>
+    }
+
+    /**
+     * Create a new child logger.
+     * The name of the child logger is [current-loggers-name].[passed-in-name]
+     * Throws &lt;code&gt;IllegalArgumentException&lt;/code&gt; if name has an empty element name
+     *
+     * @param name the subname of this logger
+     * @return the new logger
+     */
+    public final Logger getChildLogger( final String name )
+    {
+<span class="fc" id="L222">        return new Log4J2Logger( LogManager.getLogger( m_logger.getName() + &quot;.&quot; + name ) );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

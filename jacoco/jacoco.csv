@@ -1,0 +1,15 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit4Test.new Answer() {...},26,0,0,0,5,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit4Test.new Answer() {...},11,0,0,0,2,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit4Test.new Answer() {...},18,0,0,0,3,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit5Test.new Answer() {...},11,0,0,0,2,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit5Test.new Answer() {...},19,0,0,0,4,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnitTest,93,0,8,0,29,0,15,0,11,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,ECMContainer,16,193,0,6,5,46,1,9,1,6
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit4Test,269,0,8,0,62,0,17,0,13,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,YAAFIContainer,75,157,5,13,16,43,7,10,2,6
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit5Test,272,0,8,0,63,0,18,0,14,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit5Test.new Answer() {...},18,0,0,0,3,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit5Test.new Answer() {...},26,0,0,0,5,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer,BaseUnit4Test.new Answer() {...},19,0,0,0,4,0,2,0,2,0
+Fulcrum Test Container,org.apache.fulcrum.testcontainer.avalon.logger,Log4J2Logger,59,56,0,0,16,14,10,7,10,7

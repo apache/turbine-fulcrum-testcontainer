@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseUnit5Test.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Fulcrum Test Container</a> &gt; <a href="index.source.html" class="el_package">org.apache.fulcrum.testcontainer</a> &gt; <span class="el_source">BaseUnit5Test.java</span></div><h1>BaseUnit5Test.java</h1><pre class="source lang-java linenums">package org.apache.fulcrum.testcontainer;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.avalon.framework.component.ComponentException;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+/**
+ * Alternative Base class to {@link BaseUnit4Test} for component tests.
+ * 
+ * This version doesn't load the container until the first request for a
+ * component. This allows the tester to populate the configurationFileName and
+ * roleFileName, possible one per test.
+ * 
+ * JUnit 5 Version of BaseUnitTest class.
+ * 
+ * @see BaseUnit4Test
+ *
+ * @author &lt;a href=&quot;mailto:epugh@upstate.com&quot;&gt;Eric Pugh&lt;/a&gt;
+ * @author &lt;a href=&quot;mailto:quintonm@bellsouth.net&quot;&gt;Quinton McCombs&lt;/a&gt;
+ * @version $Id$
+ */
+public class BaseUnit5Test {
+	public static final String CONTAINER_ECM = &quot;CONTAINER_ECM&quot;;
+	public static final String CONTAINER_YAAFI = &quot;CONTAINER_YAAFI&quot;;
+
+	/** Key used in the context for defining the application root */
+	public static final String COMPONENT_APP_ROOT = Container.COMPONENT_APP_ROOT;
+
+	/** Pick the default container to be YAAFI, running in **/
+<span class="nc" id="L69">	private String containerType = CONTAINER_YAAFI;</span>
+
+	/** Use INFO for ConsoleLogger */
+	public static final int defaultLogLevel = ConsoleLogger.LEVEL_INFO;
+
+	/** Container for the components */
+	private Container container;
+
+	/** Setup our default configurationFileName */
+<span class="nc" id="L78">	private String configurationFileName = &quot;src/test/TestComponentConfig.xml&quot;;</span>
+
+	/** Setup our default roleFileName */
+<span class="nc" id="L81">	private String roleFileName = &quot;src/test/TestRoleConfig.xml&quot;;</span>
+
+	/** Setup our default parameterFileName */
+<span class="nc" id="L84">	private String parameterFileName = null;</span>
+
+	/** Set the log level (only works for YAAFI container) */
+<span class="nc" id="L87">	private int logLevel = defaultLogLevel;</span>
+
+	/** Hash map to store attributes for the test **/
+<span class="nc" id="L90">	public Map&lt;String, Object&gt; attributes = new HashMap&lt;String, Object&gt;();</span>
+
+	/** set the Max inactive interval **/
+<span class="nc" id="L93">	public int maxInactiveInterval = 0;</span>
+
+	/**
+	 * Gets the configuration file name for the container should use for this test.
+	 * By default it is src/test/TestComponentConfig.
+	 * 
+	 * @param configurationFileName the location of the config file
+	 */
+	protected void setConfigurationFileName(String configurationFileName) 
+	{
+<span class="nc" id="L103">		this.configurationFileName = configurationFileName;</span>
+<span class="nc" id="L104">	}</span>
+
+	/**
+	 * Override the role file name for the container should use for this test. By
+	 * default it is src/test/TestRoleConfig.
+	 * 
+	 * @param roleFileName location of the role file
+	 */
+	protected void setRoleFileName(String roleFileName) 
+	{
+<span class="nc" id="L114">		this.roleFileName = roleFileName;</span>
+<span class="nc" id="L115">	}</span>
+
+	/**
+	 * Set the console logger level
+	 * 
+	 * @see org.apache.avalon.framework.logger.ConsoleLogger for debugging levels
+	 * @param logLevel set valid logging level
+	 */
+	protected void setLogLevel(int logLevel) 
+	{
+<span class="nc" id="L125">		this.logLevel = logLevel;</span>
+<span class="nc" id="L126">	}</span>
+	
+    public int getLogLevel()
+    {
+<span class="nc" id="L130">        return logLevel;</span>
+    }
+
+	/**
+	 * Constructor for test.
+	 */
+	public BaseUnit5Test() 
+<span class="nc" id="L137">	{</span>
+<span class="nc" id="L138">	}</span>
+
+	/**
+	 * Clean up after each test is run.
+	 */
+	@AfterEach
+	public void tearDown() 
+	{
+<span class="nc bnc" id="L146" title="All 2 branches missed.">		if (container != null) </span>
+		{
+<span class="nc" id="L148">			container.dispose();</span>
+		}
+<span class="nc" id="L150">		container = null;</span>
+<span class="nc" id="L151">	}</span>
+
+	/**
+	 * Gets the configuration file name for the container should use for this test.
+	 *
+	 * @return The filename of the configuration file
+	 */
+	protected String getConfigurationFileName() 
+	{
+<span class="nc" id="L160">		return configurationFileName;</span>
+	}
+
+	/**
+	 * Gets the role file name for the container should use for this test.
+	 *
+	 * @return The filename of the role configuration file
+	 */
+	protected String getRoleFileName() 
+	{
+<span class="nc" id="L170">		return roleFileName;</span>
+	}
+
+	/**
+	 * Gets the parameter file name for the container should use for this test.
+	 *
+	 * @return The filename of the role configuration file
+	 */
+	protected String getParameterFileName() 
+	{
+<span class="nc" id="L180">		return parameterFileName;</span>
+	}
+
+	/**
+	 * Returns an instance of the named component. This method will also start the
+	 * container if it has not been started already
+	 *
+	 * @param roleName Name of the role the component fills.
+	 * @return instance of the component
+	 * @throws ComponentException generic exception
+	 */
+	protected Object lookup(String roleName) throws ComponentException 
+	{
+<span class="nc bnc" id="L193" title="All 2 branches missed.">		if (container == null) </span>
+		{
+<span class="nc bnc" id="L195" title="All 2 branches missed.">			if (containerType.equals(CONTAINER_ECM)) </span>
+			{
+<span class="nc" id="L197">				container = new ECMContainer();</span>
+			} 
+			else 
+			{
+<span class="nc" id="L201">				container = new YAAFIContainer(logLevel);</span>
+			}
+<span class="nc" id="L203">			container.startup(getConfigurationFileName(), getRoleFileName(), getParameterFileName());</span>
+		}
+<span class="nc" id="L205">		return container.lookup(roleName);</span>
+	}
+
+	/**
+	 * Releases the component.
+	 *
+	 * @param component component to be released
+	 */
+	protected void release(Object component) 
+	{
+<span class="nc bnc" id="L215" title="All 2 branches missed.">		if (container != null) </span>
+		{
+<span class="nc" id="L217">			container.release(component);</span>
+		}
+<span class="nc" id="L219">	}</span>
+
+	/**
+	 * Get a mock requestion
+	 *
+	 * @return HttpServletRequest a mock servlet request
+	 */
+	protected HttpServletRequest getMockRequest() 
+	{
+<span class="nc" id="L228">		HttpServletRequest request = mock(HttpServletRequest.class);</span>
+<span class="nc" id="L229">		HttpSession session = mock(HttpSession.class);</span>
+
+<span class="nc" id="L231">		doAnswer(new Answer&lt;Object&gt;() </span>
+<span class="nc" id="L232">		{</span>
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+<span class="nc" id="L235">				String key = (String) invocation.getArguments()[0];</span>
+<span class="nc" id="L236">				return attributes.get(key);</span>
+			}
+<span class="nc" id="L238">		}).when(session).getAttribute(anyString());</span>
+
+<span class="nc" id="L240">		doAnswer(new Answer&lt;Object&gt;() </span>
+<span class="nc" id="L241">		{</span>
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+<span class="nc" id="L244">				String key = (String) invocation.getArguments()[0];</span>
+<span class="nc" id="L245">				Object value = invocation.getArguments()[1];</span>
+<span class="nc" id="L246">				attributes.put(key, value);</span>
+<span class="nc" id="L247">				return null;</span>
+			}
+<span class="nc" id="L249">		}).when(session).setAttribute(anyString(), any());</span>
+
+<span class="nc" id="L251">		when(session.getMaxInactiveInterval()).thenReturn(maxInactiveInterval);</span>
+
+<span class="nc" id="L253">		doAnswer(new Answer&lt;Integer&gt;() </span>
+<span class="nc" id="L254">		{</span>
+			@Override
+			public Integer answer(InvocationOnMock invocation) throws Throwable {
+<span class="nc" id="L257">				return Integer.valueOf(maxInactiveInterval);</span>
+			}
+<span class="nc" id="L259">		}).when(session).getMaxInactiveInterval();</span>
+
+<span class="nc" id="L261">		doAnswer(new Answer&lt;Object&gt;() </span>
+<span class="nc" id="L262">		{</span>
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+<span class="nc" id="L265">				Integer value = (Integer) invocation.getArguments()[0];</span>
+<span class="nc" id="L266">				maxInactiveInterval = value.intValue();</span>
+<span class="nc" id="L267">				return null;</span>
+			}
+<span class="nc" id="L269">		}).when(session).setMaxInactiveInterval(anyInt());</span>
+
+<span class="nc" id="L271">		when(session.isNew()).thenReturn(true);</span>
+<span class="nc" id="L272">		when(request.getSession()).thenReturn(session);</span>
+
+<span class="nc" id="L274">		when(request.getServerName()).thenReturn(&quot;bob&quot;);</span>
+<span class="nc" id="L275">		when(request.getProtocol()).thenReturn(&quot;http&quot;);</span>
+<span class="nc" id="L276">		when(request.getScheme()).thenReturn(&quot;scheme&quot;);</span>
+<span class="nc" id="L277">		when(request.getPathInfo()).thenReturn(&quot;damn&quot;);</span>
+<span class="nc" id="L278">		when(request.getServletPath()).thenReturn(&quot;damn2&quot;);</span>
+<span class="nc" id="L279">		when(request.getContextPath()).thenReturn(&quot;wow&quot;);</span>
+<span class="nc" id="L280">		when(request.getContentType()).thenReturn(&quot;text/html&quot;);</span>
+
+<span class="nc" id="L282">		when(request.getCharacterEncoding()).thenReturn(&quot;US-ASCII&quot;);</span>
+<span class="nc" id="L283">		when(request.getServerPort()).thenReturn(8080);</span>
+<span class="nc" id="L284">		when(request.getLocale()).thenReturn(Locale.US);</span>
+
+<span class="nc" id="L286">		when(request.getHeader(&quot;Content-type&quot;)).thenReturn(&quot;text/html&quot;);</span>
+<span class="nc" id="L287">		when(request.getHeader(&quot;Accept-Language&quot;)).thenReturn(&quot;en-US&quot;);</span>
+
+<span class="nc" id="L289">		Vector&lt;String&gt; v = new Vector&lt;String&gt;();</span>
+<span class="nc" id="L290">		when(request.getParameterNames()).thenReturn(v.elements());</span>
+<span class="nc" id="L291">		return request;</span>
+	}
+
+	/**
+	 * @return the container type
+	 */
+	public String getContainerType() 
+	{
+<span class="nc" id="L299">		return containerType;</span>
+	}
+
+	/**
+	 * @param containerType container type to set
+	 */
+	public void setContainerType(String containerType) 
+	{
+<span class="nc" id="L307">		this.containerType = containerType;</span>
+<span class="nc" id="L308">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

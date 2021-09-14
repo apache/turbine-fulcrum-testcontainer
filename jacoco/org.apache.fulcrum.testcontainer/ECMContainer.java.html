@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ECMContainer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Fulcrum Test Container</a> &gt; <a href="index.source.html" class="el_package">org.apache.fulcrum.testcontainer</a> &gt; <span class="el_source">ECMContainer.java</span></div><h1>ECMContainer.java</h1><pre class="source lang-java linenums">package org.apache.fulcrum.testcontainer;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import java.io.File;
+
+import org.apache.avalon.excalibur.component.DefaultRoleManager;
+import org.apache.avalon.excalibur.component.ExcaliburComponentManager;
+import org.apache.avalon.excalibur.logger.Log4JLoggerManager;
+import org.apache.avalon.excalibur.logger.LoggerManager;
+import org.apache.avalon.framework.component.Component;
+import org.apache.avalon.framework.component.ComponentException;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
+import org.apache.avalon.framework.context.DefaultContext;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+/**
+ * This is a simple ECM based container that can be used in unit test
+ * of the fulcrum components.
+ *
+ * @author &lt;a href=&quot;mailto:quintonm@bellsouth.net&quot;&gt;Quinton McCombs&lt;/a&gt;
+ * @version $Id$
+ */
+public class ECMContainer extends AbstractLogEnabled implements Container
+{
+
+
+    /** Component manager */
+<span class="fc" id="L44">    private ExcaliburComponentManager manager = new ExcaliburComponentManager();</span>
+    /** Configurqation file */
+    private String configFileName;
+    /** Role file name */
+    private String roleFileName;
+    /** LogManager for logging */
+<span class="fc" id="L50">    private LoggerManager lm = new Log4JLoggerManager();</span>
+    /**
+     * Constructor
+     */
+    public ECMContainer()
+<span class="fc" id="L55">    {</span>
+<span class="fc" id="L56">        this.enableLogging(lm.getLoggerForCategory(&quot;org.apache.fulcrum.testcontainer.Container&quot;));</span>
+<span class="fc" id="L57">    }</span>
+    /**
+     * Starts up the container and initializes it.
+     *
+     * @param configFileName Name of the component configuration file
+     * @param roleFileName Name of the role configuration file
+     */
+    public void startup(String configFileName, String roleFileName,String parametersFileName)
+    {
+<span class="fc" id="L66">        getLogger().debug(&quot;Starting container...&quot;);</span>
+<span class="fc" id="L67">        getLogger().debug( &quot;with logger: &quot; + getLogger().getClass().getSimpleName());</span>
+<span class="fc" id="L68">        this.configFileName = configFileName;</span>
+<span class="fc" id="L69">        this.roleFileName = roleFileName;</span>
+<span class="fc" id="L70">        File configFile = new File(configFileName);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (!configFile.exists())</span>
+        {
+<span class="fc" id="L73">            throw new RuntimeException(</span>
+                &quot;Could not initialize the container because the config file could not be found:&quot; + configFile);
+        }
+        try
+        {
+<span class="fc" id="L78">            initialize();</span>
+<span class="fc" id="L79">            getLogger().info(&quot;Container ready.&quot;);</span>
+        }
+<span class="nc" id="L81">        catch (Exception e)</span>
+        {
+<span class="nc" id="L83">            getLogger().error(&quot;Could not initialize the container&quot;, e);</span>
+<span class="nc" id="L84">            throw new RuntimeException(&quot;Could not initialize the container&quot;);</span>
+<span class="fc" id="L85">        }</span>
+<span class="fc" id="L86">    }</span>
+    // -------------------------------------------------------------
+    // Avalon lifecycle interfaces
+    // -------------------------------------------------------------
+    /**
+     * Initializes the container
+     *
+     * @throws Exception generic exception
+     */
+    public void initialize() throws Exception
+    {
+<span class="fc" id="L97">        boolean useRoles = true;</span>
+<span class="fc" id="L98">        File roleFile = new File(roleFileName+&quot;&quot;);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (!roleFile.exists())</span>
+        {
+<span class="fc" id="L101">            useRoles = false;</span>
+<span class="fc" id="L102">            getLogger().info(&quot;Not using separate roles file&quot;);</span>
+        }
+        // process configuration files
+<span class="fc" id="L105">        DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();</span>
+<span class="fc" id="L106">        Configuration sysConfig = builder.buildFromFile(configFileName);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (useRoles)</span>
+        {
+<span class="fc" id="L109">            Configuration roleConfig = builder.buildFromFile(roleFileName);</span>
+            // Setup the RoleManager
+<span class="fc" id="L111">            DefaultRoleManager roles = new DefaultRoleManager();</span>
+<span class="fc" id="L112">            roles.enableLogging(lm.getLoggerForCategory(&quot;org.apache.fulcrum&quot;));</span>
+<span class="fc" id="L113">            roles.configure(roleConfig);</span>
+<span class="fc" id="L114">			this.manager.setRoleManager(roles);</span>
+        }
+        // Setup ECM
+<span class="fc" id="L117">        this.manager.setLoggerManager(lm);</span>
+<span class="fc" id="L118">        this.manager.enableLogging(lm.getLoggerForCategory(&quot;org.apache.fulcrum&quot;));</span>
+<span class="fc" id="L119">        DefaultContext context = new DefaultContext();</span>
+<span class="fc" id="L120">        String absolutePath = new File(&quot;&quot;).getAbsolutePath();</span>
+<span class="fc" id="L121">        context.put(COMPONENT_APP_ROOT, absolutePath);</span>
+<span class="fc" id="L122">        context.put(URN_AVALON_HOME, absolutePath);</span>
+<span class="fc" id="L123">        this.manager.contextualize(context);</span>
+
+<span class="fc" id="L125">        this.manager.configure(sysConfig);</span>
+        // Init ECM!!!!
+<span class="fc" id="L127">        this.manager.initialize();</span>
+<span class="fc" id="L128">    }</span>
+    /**
+     * Disposes of the container and releases resources
+     */
+    public void dispose()
+    {
+<span class="fc" id="L134">        getLogger().debug(&quot;Disposing of container...&quot;);</span>
+<span class="fc" id="L135">        this.manager.dispose();</span>
+<span class="fc" id="L136">        getLogger().info(&quot;Container has been disposed.&quot;);</span>
+<span class="fc" id="L137">    }</span>
+    /**
+     * Returns an instance of the named component
+     *
+     * @param roleName Name of the role the component fills.
+     * @throws ComponentException generic exception
+     */
+    public Object lookup(String roleName) throws ComponentException
+    {
+<span class="fc" id="L146">        return this.manager.lookup(roleName);</span>
+    }
+    
+    /**
+     * Releases the component
+     *
+     * @param component instance of the component to release
+     */
+    public void release(Component component)
+    {
+<span class="nc" id="L156">        this.manager.release(component);</span>
+<span class="nc" id="L157">    }</span>
+
+    public void release(Object component)
+    {
+<span class="fc" id="L161">        this.manager.release((Component)component);</span>
+<span class="fc" id="L162">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
