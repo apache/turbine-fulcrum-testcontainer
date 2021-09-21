@@ -24,7 +24,9 @@
     <!-- author email="quintonm@bellsouth.net">Quinton McCombs</author -->
   </properties>
   <body>
-    <release version="1.0.9" date="in SVN">
+    <release version="1.0.10" date="in GIT">
+    </release>
+    <release version="1.0.9" date="2021-01-04">
     <action type="update" dev="painter">
         Update junit to 4.13.1, junit.jupiter.version to 5.7.0, junit.platform to 1.7.0
       </action>  
