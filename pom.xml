@@ -13,7 +13,7 @@
     <parent>
     <artifactId>turbine-parent</artifactId>
     <groupId>org.apache.turbine</groupId>
-    <version>9</version>
+    <version>10-SNAPSHOT</version>
     <relativePath></relativePath>
     </parent>
 
@@ -57,6 +57,7 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
+      <!-- do not set test scope to allow for runngi surefire test with junit 5  -->
       <!--scope>test</scope -->
     </dependency>
     <!-- use Junit 4 within Junit 5 -->
@@ -64,14 +65,15 @@
         <groupId>org.junit.vintage</groupId>
         <artifactId>junit-vintage-engine</artifactId>
          <version>${junit.jupiter.version}</version>
-        <scope>test</scope>
+         <!-- do not set test scope to allow for runngi surefire test with junit 4  -->
+        <!--scope>test</scope-->
     </dependency>
 
     <!-- Needed if testing with YAAFI -->
     <dependency>
         <groupId>org.apache.fulcrum</groupId>
         <artifactId>fulcrum-yaafi</artifactId>
-        <version>1.0.8</version>
+        <version>1.0.9-SNAPSHOT</version>
         <optional>true</optional>
     </dependency>
     <dependency>
@@ -90,6 +92,18 @@
         <artifactId>excalibur-component</artifactId>
         <version>2.2.1</version>
         <type>jar</type>
+        <optional>true</optional>
+        <exclusions>
+           <exclusion>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.2</version>
         <optional>true</optional>
     </dependency>
     <!-- Log4j2 may be better used by default -->
@@ -148,7 +162,7 @@
     <properties>
         <turbine.site.path>turbine-fulcrum-testcontainer</turbine.site.path>
         <turbine.scmPubCheckoutDirectory>${turbine.site.cache}/fulcrum/testcontainer</turbine.scmPubCheckoutDirectory>
-        <junit.jupiter.version>5.7.1</junit.jupiter.version>
+        <junit.jupiter.version>5.8.1</junit.jupiter.version>
         <junit.platform>1.7.1</junit.platform>
     </properties>
 
