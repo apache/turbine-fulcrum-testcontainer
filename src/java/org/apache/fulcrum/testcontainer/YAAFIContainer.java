@@ -25,10 +25,10 @@ import org.apache.avalon.framework.component.Component;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.fulcrum.testcontainer.avalon.logger.Log4J2Logger;
 import org.apache.fulcrum.yaafi.framework.container.ServiceContainer;
 import org.apache.fulcrum.yaafi.framework.factory.ServiceContainerConfiguration;
 import org.apache.fulcrum.yaafi.framework.factory.ServiceContainerFactory;
+import org.apache.fulcrum.yaafi.framework.logger.Log4j2Logger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -61,7 +61,7 @@ public class YAAFIContainer extends AbstractLogEnabled implements Container
         //this.enableLogging( new ConsoleLogger( logLevel ) );
         logger = LogManager.getLogger( "avalon" );
         Configurator.setLevel( "avalon",logLevel );
-        this.enableLogging( new Log4J2Logger( logger ) );
+        this.enableLogging( new Log4j2Logger( logger ) );
         this.config = new ServiceContainerConfiguration();
     }
 
@@ -91,7 +91,7 @@ public class YAAFIContainer extends AbstractLogEnabled implements Container
             this.logLevel = Level.INFO;
         }
         Configurator.setLevel( "avalon", this.logLevel );
-        this.enableLogging( new Log4J2Logger( logger ) );
+        this.enableLogging( new Log4j2Logger( logger ) );
         this.config = new ServiceContainerConfiguration();
     }
 
@@ -112,7 +112,7 @@ public class YAAFIContainer extends AbstractLogEnabled implements Container
         this.config.setComponentConfigurationLocation( configFileName );
         this.config.setComponentRolesLocation( roleFileName );
         this.config.setParametersLocation( parametersFileName );
-        this.config.setLogger( new Log4J2Logger( logger ) );
+        this.config.setLogger( new Log4j2Logger( logger ) );
 
         File configFile = new File(configFileName);
 
