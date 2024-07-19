@@ -33,6 +33,7 @@ import java.util.Vector;
 
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.fulcrum.yaafi.container.Container;
 import org.junit.After;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;

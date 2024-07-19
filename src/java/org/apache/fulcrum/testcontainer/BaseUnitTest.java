@@ -21,6 +21,7 @@ package org.apache.fulcrum.testcontainer;
 
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.fulcrum.yaafi.container.Container;
 
 import junit.framework.TestCase;
 

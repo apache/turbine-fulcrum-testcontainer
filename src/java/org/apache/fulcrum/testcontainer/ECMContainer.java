@@ -29,6 +29,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.avalon.framework.context.DefaultContext;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.fulcrum.yaafi.container.Container;
 /**
  * This is a simple ECM based container that can be used in unit test
  * of the fulcrum components.
