@@ -31,7 +31,7 @@
     <version position="left" />
    
     <!-- IMPORTANT Notice: elements like bannerLeft, publishDate, version, links, skin and custom
-      are redundant after updating to released parent pom v14 
+      are redundant after updating to released parent pom v14 which allows skin inheritance again.
     -->
    <skin>
         <groupId>org.apache.maven.skins</groupId>
